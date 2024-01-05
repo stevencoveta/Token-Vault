@@ -57,6 +57,7 @@ def transform_results(df, chain):
     print('done prepro ...')
     return dff
 
+
 import pandas as pd
 import psycopg2
 from psycopg2 import pool
@@ -78,44 +79,31 @@ def create_table(conn):
             )
         """)
         conn.commit()
+        print('done creating table ..')
 
-# Function to insert a single row into the database
-def insert_row(pool, row):
+# Function to insert trades into the database
+def insert_dataframe(pool, dataframe):
     with pool.getconn() as conn:
         create_table(conn)  # Create the table if it doesn't exist
 
         with conn.cursor() as cur:
-            query = """
-                INSERT INTO public.token_apy (symbol, apy, protocol, chain, last_updated)
-                VALUES (%s, %s, %s, %s, %s)
-            """
-            try:
+            for _, row in dataframe.iterrows():
+                query = """
+                    INSERT INTO public.token_apy (symbol, apy, protocol, chain, last_updated)
+                    VALUES (%s, %s, %s, %s, %s)
+                """
                 cur.execute(query, (row['symbol'], row['apy'], row['protocol'], row['chain'], row['last_updated']))
-                print(f"Data inserted successfully for {row['symbol']}")
-                conn.commit()
-            except Exception as e:
-                print(f"Error inserting data for {row['symbol']}: {e}")
-                conn.rollback()
+            conn.commit()
 
         pool.putconn(conn)
 
-# Example usage
-def main():
-    # Example DataFrame
-    data = {
-        'symbol': ['FRAX', 'WBTC', 'MAI', 'wstETH', 'WETH', 'ARB', 'LUSD'],
-        'apy': [10.501687, 0.013937, 0.030517, 0.005315, 1.226682, 0.20206, 3.420332],
-        'protocol': ['AAVE'] * 7,
-        'chain': ['protocol-v3-arbitrum'] * 7,
-        'last_updated': ['2024-01-05 15:03:05.295236+00:00'] * 7
-    }
-
-    df = pd.DataFrame(data)
-    
+def main(df):
     connection_pool = psycopg2.pool.SimpleConnectionPool(1, 10, dsn)
+    insert_dataframe(connection_pool, df)
 
-    for _, row in df.iterrows():
-        insert_row(connection_pool, row)
+chains = ['protocol-v3','protocol-v2','aave-v2-matic','protocol-v2-avalanche','protocol-v3-arbitrum','protocol-v3-optimism','protocol-v3-polygon','protocol-v3-avalanche']
 
 if __name__ == '__main__':
-    main()
+    data = fetch_apy('protocol-v3')
+    df = transform_results(data,'protocol-v3')
+    main(df)
