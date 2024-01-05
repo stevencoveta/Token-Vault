@@ -48,10 +48,23 @@ def transform_results(df, chain):
     dff['protocol'] = 'AAVE'
     
     if chain == 'protocol-v3':
-        chain = 'ethereum-v3'
+        chain = 'aave-v3'
     if chain == 'protocol-v2':
-        chain = 'ethereum-v2'
-    
+        chain = 'aave-v2'
+    if chain == 'aave-v2-matic':
+        chain = 'matic'
+    if chain == 'protocol-v2-avalanche': 
+        chain = 'avalanche'
+    if chain == 'protocol-v3-arbitrum': 
+        chain = 'arbitrum'
+    if chain =='protocol-v3-optimism': 
+        chain = 'optimism'
+    if chain == 'protocol-v3-polygon':
+        chain = 'polygon'
+    if chain == 'protocol-v3-avalanche': 
+        chain = 'avalanche'
+
+
     dff['chain'] = chain
     dff['last_updated'] = datetime.now(pytz.utc)
     print('done prepro ...')
