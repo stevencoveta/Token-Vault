@@ -111,11 +111,11 @@ def insert_dataframe(pool, dataframe):
 def main():
     # Example DataFrame
     data = {
-        'symbol': ['FRAX', 'WBTC', 'MAI', 'wstETH', 'WETH', 'ARB', 'LUSD'],
-        'apy': [10.501687, 0.013937, 0.030517, 0.005315, 1.226682, 0.20206, 3.420332],
-        'protocol': ['AAVE'] * 7,
-        'chain': ['protocol-v3-arbitrum'] * 7,
-        'last_updated': ['2024-01-05 15:03:05.295236+00:00'] * 7
+        'symbol': ['FRAX'],
+        'apy': [10.501687],
+        'protocol': ['AAVE'],
+        'chain': ['protocol-v3-arbitrum'] ,
+        'last_updated': ['2024-01-05 15:03:05.295236+00:00']
     }
 
     df = pd.DataFrame(data)
