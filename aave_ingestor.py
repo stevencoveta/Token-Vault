@@ -104,6 +104,7 @@ def main(df):
 chains = ['protocol-v3','protocol-v2','aave-v2-matic','protocol-v2-avalanche','protocol-v3-arbitrum','protocol-v3-optimism','protocol-v3-polygon','protocol-v3-avalanche']
 
 if __name__ == '__main__':
-    data = fetch_apy('protocol-v3')
-    df = transform_results(data,'protocol-v3')
-    main(df)
+    for i in chains:
+        data = fetch_apy(i)
+        df = transform_results(data,i)
+        main(df)
