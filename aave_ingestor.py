@@ -62,7 +62,7 @@ import psycopg2
 from psycopg2 import pool
 
 # Adjust the connection parameters based on your PostgreSQL setup
-dsn = 'dbname=postgres user=postgres password=napcat host=13.231.138.2 port=5432'
+dsn = 'dbname=postgres user=postgres password=napcat host=localhost port=5432'
 
 # Function to create the table if it doesn't exist
 def create_table(conn):
