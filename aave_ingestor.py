@@ -41,7 +41,7 @@ def transform_results(df, chain):
     df = pd.DataFrame(df['data']['reserves'])
     
     df.index = df.symbol
-    df['apy'] = (df['liquidityRate'].astype(float) / 10 ** 27) * 100
+    df['apy'] = ((df['liquidityRate'].astype(float) / 10 ** 27) * 100).astype(float).round(2)
     df = df.reset_index(drop=True)
     
     dff = df[['symbol', 'apy']].copy()
