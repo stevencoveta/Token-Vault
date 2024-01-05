@@ -97,10 +97,15 @@ def insert_dataframe(pool, dataframe):
                     print(f"Error inserting data: {e}")
                     conn.rollback()
                     break
-            else:
-                conn.commit()
+                else:
+                    print("Data inserted successfully")
 
-        pool.putconn(conn)
+        conn.commit()
+
+        # Add this line to check the connection status
+        print(f"Connected: {not pool.closed}")
+
+    pool.putconn(conn)
 
 # Example usage
 def main():
