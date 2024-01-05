@@ -27,7 +27,7 @@ def fetch_apy(chain):
         'variables': {},
         'query': '{ reserves(first: 100) { id name decimals symbol liquidityRate variableBorrowRate stableBorrowRate totalLiquidity utilizationRate availableLiquidity liquidityIndex totalCurrentVariableDebt price { priceInEth __typename } __typename } }'
     }
-
+    print(f'fetching url protocol {chain} ... ')
     response = requests.post(url, headers=headers, json=data)
     
     if response.status_code != 200:
@@ -37,6 +37,7 @@ def fetch_apy(chain):
 
 
 def transform_results(df, chain):
+    print('performing prepro ...')
     df = pd.DataFrame(df['data']['reserves'])
     
     df.index = df.symbol
@@ -53,7 +54,7 @@ def transform_results(df, chain):
     
     dff['chain'] = chain
     dff['last_updated'] = datetime.now(pytz.utc)
-    
+    print('done prepro ...')
     return dff
 
 
@@ -90,18 +91,32 @@ def insert_dataframe(pool, dataframe):
                     INSERT INTO public.token_apy (symbol, apy, protocol, chain, last_updated)
                     VALUES (%s, %s, %s, %s, %s)
                 """
-                cur.execute(query, (row['symbol'], row['apy'], row['protocol'], row['chain'], row['last_updated']))
-            conn.commit()
+                try:
+                    cur.execute(query, (row['symbol'], row['apy'], row['protocol'], row['chain'], row['last_updated']))
+                except Exception as e:
+                    print(f"Error inserting data: {e}")
+                    conn.rollback()
+                    break
+            else:
+                conn.commit()
 
         pool.putconn(conn)
 
-def main(df):
+# Example usage
+def main():
+    # Example DataFrame
+    data = {
+        'symbol': ['FRAX', 'WBTC', 'MAI', 'wstETH', 'WETH', 'ARB', 'LUSD'],
+        'apy': [10.501687, 0.013937, 0.030517, 0.005315, 1.226682, 0.20206, 3.420332],
+        'protocol': ['AAVE'] * 7,
+        'chain': ['protocol-v3-arbitrum'] * 7,
+        'last_updated': ['2024-01-05 15:03:05.295236+00:00'] * 7
+    }
+
+    df = pd.DataFrame(data)
+    
     connection_pool = psycopg2.pool.SimpleConnectionPool(1, 10, dsn)
     insert_dataframe(connection_pool, df)
 
-chains = ['protocol-v3','protocol-v2','aave-v2-matic','protocol-v2-avalanche','protocol-v3-arbitrum','protocol-v3-optimism','protocol-v3-polygon','protocol-v3-avalanche']
-
 if __name__ == '__main__':
-    data = fetch_apy('protocol-v3')
-    df = transform_results(data,'protocol-v3')
-    main(df)
+    main()
