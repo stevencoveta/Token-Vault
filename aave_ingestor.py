@@ -118,9 +118,6 @@ chains = ['protocol-v3','protocol-v2','aave-v2-matic','protocol-v2-avalanche','p
 
 if __name__ == '__main__':
     for i in chains:
-        try:
-            data = fetch_apy(i)
-            df = transform_results(data,i)
-            main(df)
-        except as e: 
-            print(e)
+        data = fetch_apy(i)
+        df = transform_results(data,i)
+        main(df)
