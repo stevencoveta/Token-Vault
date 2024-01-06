@@ -5,6 +5,7 @@ import pytz
 
 def all_bridge_fetch_apy():
     try:
+        print('fetching AllBridge ...')
         all_chains = []
         data = requests.get('https://core.api.allbridgecoreapi.net/token-info').json()
         chains = ([(k) for k in data.keys()])
@@ -30,6 +31,7 @@ def all_bridge_fetch_apy():
             df['chain'] = chain
             df['last_updated'] = datetime.now(pytz.utc)
             all_chains.append(df)
+        print('done fetching AllBridge ...')
         return pd.concat(all_chains)
     except Exception as e: 
         print(e)
