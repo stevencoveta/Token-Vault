@@ -20,7 +20,7 @@ def create_table(conn):
             )
         """)
         conn.commit()
-        print('done creating table ..')
+        print('done creating table ...')
 
 # Function to insert trades into the database
 def insert_dataframe(pool, dataframe):
