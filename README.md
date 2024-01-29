@@ -12,4 +12,4 @@ This project aims to create an automated yield strategy by scraping data from Aa
 
 ## Installation
 1. Clone this repository:
-   git clone https://github.com/your_username/automatic-yield-strategy.git
+   git clone git@github.com:stevencoveta/Token-Vault.git
